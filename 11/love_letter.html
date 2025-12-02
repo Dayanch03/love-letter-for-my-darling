@@ -1,0 +1,340 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Для тебя ❤️</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            background: linear-gradient(135deg, #ffc3e1 0%, #ffb3d9 50%, #ffa3d0 100%);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            flex-direction: column;
+            overflow-y: auto; /* <-- ВКЛЮЧИЛ ПРОКРУТКУ */
+            position: relative;
+            padding-bottom: 200px; /* <-- ЧТОБЫ ВНИЗУ БЫЛО МЕСТО */
+        }
+
+        .flower {
+            position: absolute;
+            font-size: 30px;
+            animation: float 15s infinite ease-in-out;
+            opacity: 0.6;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            25% { transform: translateY(-20px) rotate(5deg); }
+            50% { transform: translateY(-40px) rotate(-5deg); }
+            75% { transform: translateY(-20px) rotate(3deg); }
+        }
+
+        .container {
+            position: relative;
+            z-index: 10;
+            max-width: 500px;
+            width: 90%;
+            padding: 20px;
+            margin: 120px auto;
+        }
+
+        .envelope-wrapper {
+            perspective: 1000px;
+            margin: 0 auto;
+        }
+
+        .envelope {
+            width: 100%;
+            max-width: 400px;
+            height: 280px;
+            margin: 0 auto;
+            position: relative;
+            background: #fff;
+            box-shadow: 0 20px 60px rgba(255, 105, 180, 0.4);
+            border-radius: 10px;
+            transition: all 0.6s ease;
+        }
+
+        .envelope-flap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 140px;
+            background: linear-gradient(135deg, #ffb3d9 0%, #ff85c0 100%);
+            clip-path: polygon(0 0, 50% 70%, 100% 0);
+            transform-origin: top center;
+            transition: transform 0.6s ease;
+            border-radius: 10px 10px 0 0;
+            z-index: 3;
+        }
+
+        .envelope.open .envelope-flap {
+            transform: rotateX(-180deg);
+        }
+
+        .question-card {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            padding: 30px;
+            background: white;
+            border-radius: 15px;
+            z-index: 5;
+            transition: all 0.6s ease;
+            box-shadow: 0 10px 30px rgba(255, 105, 180, 0.3);
+        }
+
+        .envelope.open .question-card {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .question-card h2 {
+            color: #ff1493;
+            font-size: 28px;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(255, 105, 180, 0.3);
+        }
+
+        .buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            font-size: 18px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Georgia', serif;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn-yes {
+            background: linear-gradient(135deg, #ff69b4 0%, #ff1493 100%);
+            color: white;
+        }
+
+        .btn-yes:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(255, 20, 147, 0.4);
+        }
+
+        .btn-no {
+            background: linear-gradient(135deg, #ffc0cb 0%, #ffb6c1 100%);
+            color: #ff1493;
+        }
+
+        .btn-no:hover {
+            transform: scale(0.95);
+        }
+
+        .letter {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100%);
+            width: 90%;
+            max-width: 350px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(255, 105, 180, 0.3);
+            padding: 30px;
+            opacity: 0;
+            transition: all 0.8s ease;
+            z-index: 1;
+        }
+
+        .envelope.open .letter {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        .letter img {
+            width: 100%;
+            max-width: 200px;
+            height: auto;
+            margin: 0 auto 20px;
+            display: block;
+            border-radius: 10px;
+        }
+
+        .letter-text {
+            color: #ff1493;
+            font-size: 18px;
+            line-height: 1.6;
+            text-align: center;
+        }
+
+        .heart {
+            color: #ff1493;
+            font-size: 30px;
+            display: inline-block;
+            animation: heartbeat 1.5s infinite;
+        }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            10%, 30% { transform: scale(1.1); }
+            20%, 40% { transform: scale(1); }
+        }
+
+        .error-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(255, 20, 147, 0.5);
+            text-align: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            z-index: 100;
+            max-width: 90%;
+        }
+
+        .error-message.show {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .error-message h3 {
+            color: #ff1493;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 480px) {
+            .envelope {
+                height: 240px;
+            }
+            .question-card h2 {
+                font-size: 22px;
+            }
+            .btn {
+                padding: 10px 20px;
+                font-size: 16px;
+            }
+            .letter {
+                padding: 20px;
+            }
+            .letter-text {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Фоновые цветочки -->
+    <div class="flower" style="top: 10%; left: 10%; animation-delay: 0s;">🌸</div>
+    <div class="flower" style="top: 20%; right: 15%; animation-delay: 2s;">🌺</div>
+    <div class="flower" style="bottom: 15%; left: 20%; animation-delay: 4s;">🌷</div>
+    <div class="flower" style="top: 60%; right: 10%; animation-delay: 1s;">🌹</div>
+    <div class="flower" style="bottom: 30%; right: 25%; animation-delay: 3s;">🌸</div>
+    <div class="flower" style="top: 40%; left: 5%; animation-delay: 5s;">🌺</div>
+    <div class="flower" style="bottom: 10%; right: 30%; animation-delay: 2.5s;">🌷</div>
+    <div class="flower" style="top: 70%; left: 30%; animation-delay: 4.5s;">🌹</div>
+
+    <div class="container">
+        <div class="envelope-wrapper">
+            <div class="envelope" id="envelope">
+
+                <div class="envelope-flap"></div>
+
+                <div class="question-card" id="questionCard">
+                    <h2>Ты любишь меня? <span class="heart">❤️</span></h2>
+                    <div class="buttons">
+                        <button class="btn btn-yes" onclick="answerYes()">Да</button>
+                        <button class="btn btn-no" onclick="answerNo()">Нет</button>
+                    </div>
+                </div>
+
+                <div class="letter" id="letter">
+                    <img src="https://m.espacepourlavie.ca/sites/espacepourlavie.ca/files/rosier-montreal-0465-1-00262_0.jpg" alt="Романтическое изображение">
+                    <div class="letter-text">
+                        <p style="margin-bottom: 15px;">Моя любимая булочка,</p>
+                        <p style="margin-bottom: 15px;">Я хочу сказать тебе кое-что важное. Я люблю тебя искренне, глубоко и всем сердцем</p>
+                        <p style="margin-bottom: 15px;">Когда ты рядом, мой мир становится светлее, а каждый день получает новый смысл. Мне безумно нравится твоя улыбка, твой голос, твоя доброта всё, что делает тебя такой неповторимой.</p>
+                        <p style="font-weight: bold; font-size: 20px;">Ты моё счастье. И я люблю тебя больше, чем могу выразить словами. <span class="heart">❤️</span></p>
+                        <p style="margin-top: 20px; font-size: 16px; font-style: italic;">Твой медвежонок ✨</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="error-message" id="errorMessage">
+        <h3>Ошибка, булочка! 😊</h3>
+        <p style="color: #ff69b4; font-size: 18px; margin-bottom: 20px;">Ты всегда меня любишь! 💕</p>
+        <button class="btn btn-yes" onclick="closeError()">Хорошо, да! ❤️</button>
+    </div>
+
+    <script>
+        function answerYes() {
+            const envelope = document.getElementById('envelope');
+            envelope.classList.add('open');
+            createHearts();
+        }
+
+        function answerNo() {
+            const errorMessage = document.getElementById('errorMessage');
+            errorMessage.classList.add('show');
+        }
+
+        function closeError() {
+            const errorMessage = document.getElementById('errorMessage');
+            errorMessage.classList.remove('show');
+            setTimeout(() => {
+                answerYes();
+            }, 300);
+        }
+
+        function createHearts() {
+            for (let i = 0; i < 20; i++) {
+                const heart = document.createElement('div');
+                heart.innerHTML = '❤️';
+                heart.style.position = 'fixed';
+                heart.style.left = Math.random() * 100 + '%';
+                heart.style.top = '100%';
+                heart.style.fontSize = (Math.random() * 20 + 20) + 'px';
+                heart.style.opacity = '0.8';
+                heart.style.zIndex = '1000';
+                heart.style.pointerEvents = 'none';
+                heart.style.transition = 'all 3s ease-out';
+                document.body.appendChild(heart);
+
+                setTimeout(() => {
+                    heart.style.top = '-10%';
+                    heart.style.opacity = '0';
+                }, 100);
+
+                setTimeout(() => {
+                    heart.remove();
+                }, 3100);
+            }
+        }
+    </script>
+
+</body>
+</html>
